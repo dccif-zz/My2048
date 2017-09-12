@@ -113,8 +113,9 @@ int buttoninit()
 	// µã»÷×´Ì¬
 	if (buttonstate == true)
 	{
-		if(newbuttonstate == true){
-			image(NEWGAMEdown,256,18);
+		if (newbuttonstate == true)
+		{
+			image(NEWGAMEdown, 256, 18);
 		}
 		else if (buttondown == 1)
 		{
