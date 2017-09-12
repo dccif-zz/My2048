@@ -113,7 +113,11 @@ int buttoninit()
 	// 点击状态
 	if (buttonstate == true)
 	{
+<<<<<<< HEAD
 		if (newbuttonstate == true)
+=======
+		if (buttondown == 0)
+>>>>>>> master
 		{
 			image(NEWGAMEdown, 256, 18);
 		}
@@ -221,7 +225,11 @@ int scoreUpdate()
 // 最高分记录
 int bestscoreRecord()
 {
+<<<<<<< HEAD
 	if (buttondown == 3 || buttondown == -1)
+=======
+	if (buttondown == 3 || buttondown == 0)
+>>>>>>> master
 	{
 		itoa(bestscore[0], best_String, 10);
 		if (score > bestscore[0])
@@ -229,7 +237,11 @@ int bestscoreRecord()
 			bestscore[0] = score;
 		}
 	}
+<<<<<<< HEAD
 	else if (buttondown == 1)
+=======
+	if (buttondown == 1)
+>>>>>>> master
 	{
 		itoa(bestscore[1], best_String, 10);
 		if (score > bestscore[1])
@@ -237,7 +249,11 @@ int bestscoreRecord()
 			bestscore[1] = score;
 		}
 	}
+<<<<<<< HEAD
 	else if (buttondown == 2)
+=======
+	if (buttondown == 2)
+>>>>>>> master
 	{
 		itoa(bestscore[2], best_String, 10);
 		if (score > bestscore[2])
@@ -246,7 +262,11 @@ int bestscoreRecord()
 		}
 	}
 	text(best_String, 168, 134, 0, 0, 0);
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> master
 	return 0;
 }
 
@@ -543,8 +563,12 @@ void setup()
 	playstate = false;
 	gamestate = true;
 
+<<<<<<< HEAD
 	buttondown = -1;
 	//buttonbefore = 0;
+=======
+	buttondown = 0;
+>>>>>>> master
 	gamemapsize = 4;
 	score = 0;
 	steps = 0;
@@ -596,9 +620,13 @@ void mousePress()
 	if (inbound(mouseX, mouseY, 256, 18, 201, 52))
 	{
 		buttonstate = true;
+<<<<<<< HEAD
 		//buttonbefore = buttondown;
 		//buttondown = 0;
 		newbuttonstate = true;
+=======
+		buttondown = 0;
+>>>>>>> master
 		restartGame();
 	}
 
