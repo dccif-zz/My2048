@@ -1,7 +1,7 @@
 [Project]
 FileName=My2048.dev
 Name=My2048
-Type=1
+Type=0
 Ver=2
 ObjFiles=
 Includes=C:\Users\dccif\Documents\SDL2-devel\SDL2-devel\i686-w64-mingw32\include;C:\Users\dccif\Documents\SDL2-devel\i686-w64-mingw32\include
@@ -19,7 +19,7 @@ ObjectOutput=
 LogOutput=
 LogOutputEnabled=0
 OverrideOutput=0
-OverrideOutputName=speedcar.exe
+OverrideOutputName=My2048.exe
 HostApplication=
 UseCustomMakefile=0
 CustomMakefile=
