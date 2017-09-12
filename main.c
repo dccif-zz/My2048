@@ -4,9 +4,18 @@
 #include <stdlib.h>
 
 // 图片资源
-Image *UISurface;
+Image *UISurface; // 界面
+
+// 加载按钮
 Image *NEWGAME;
 Image *NEWGAMEdown;
+Image *but2x2;
+Image *but2x2down;
+Image *but3x3;
+Image *but3x3down;
+Image *but4x4;
+Image *but4x4down;
+
 Image *pic0;
 Image *pic2;
 Image *pic4;
@@ -21,13 +30,17 @@ Image *pic1024;
 Image *pic2048;
 
 //游戏配置
+int gamemapsize;
 int gamemap[4][4];
-int score, bestscore, steps, gameover, gamew;
-char *score_String[10];
-char *best_String[10];
+int score, steps, gameover, gamew;
+int bestscore[3] = {0, 0, 0};
+char score_String[10];
+char best_String[10];
 char *steps_String[10];
 
 //系统状态
+int buttondown;
+
 bool initstate = false; // 初始化状态
 
 bool playstate = false; // 是否在游戏状态
@@ -56,9 +69,21 @@ int All0init()
 //加载图片
 int loadpic()
 {
+
 	UISurface = loadimage("image/My2048.jpg");
+
+	// 加载按钮
 	NEWGAME = loadimage("image/newgame.png");
 	NEWGAMEdown = loadimage("image/newgamedown.png");
+
+	but2x2 = loadimage("image/2x2.png");
+	but2x2down = loadimage("image/2x2down.png");
+	but3x3 = loadimage("image/3x3.png");
+	but3x3down = loadimage("image/3x3down.png");
+	but4x4 = loadimage("image/4x4.png");
+	but4x4down = loadimage("image/4x4down.png");
+
+	// 加载地图图片
 	pic0 = loadimage("image/0.jpg");
 	pic2 = loadimage("image/2.jpg");
 	pic4 = loadimage("image/4.jpg");
@@ -75,14 +100,63 @@ int loadpic()
 	return 0;
 }
 
+// 初始化按钮
+int buttoninit()
+{
+	image(NEWGAME, 256, 18);
+	image(but2x2, 263, 100);
+	image(but3x3, 263 + 65, 100);
+	image(but4x4, 263 + 65 * 2, 100);
+
+	// 点击状态
+	if (buttonstate == true)
+	{
+		if (buttondown == 0)
+		{
+			image(NEWGAMEdown, 256, 18);
+		}
+		else if (buttondown == 1)
+		{
+			image(but2x2down, 263, 100);
+		}
+		else if (buttondown == 2)
+		{
+			image(but3x3down, 263 + 65, 100);
+		}
+		else if (buttondown == 3)
+		{
+			image(but4x4down, 263 + 65 * 2, 100);
+		}
+	}
+
+	return 0;
+}
+
+// 提示语句
+void tips()
+{
+	if (inbound(mouseX, mouseY, 264, 100, 55, 55))
+	{
+		text("这么丧心病狂吗？", 356, 100, 0, 0, 0);
+	}
+	if (inbound(mouseX, mouseY, 264 + 65, 100, 55, 55))
+	{
+		text("稍稍一些难", 356, 100, 0, 0, 0);
+	}
+	if (inbound(mouseX, mouseY, 264 + 65 * 2, 100, 55, 55))
+	{
+		text("还是换回来吧", 356, 100, 0, 0, 0);
+	}
+}
+
 // 随机生成 2 或 4 函数
 int appear()
 {
 	int i, j, ran, t[16], x = 0, a, b;
-	srand((int)time(0));	//随机种子初始化
-	for (j = 0; j < 4; j++) //将空白的区域的坐标保存到中间数组t中
+	srand((int)time(0));			  //随机种子初始化
+	for (j = 0; j < gamemapsize; j++) //将空白的区域的坐标保存到中间数组t中
 	{
-		for (i = 0; i < 4; i++)
+		for (i = 0; i < gamemapsize; i++)
 		{
 			if (gamemap[j][i] == 0)
 			{
@@ -135,7 +209,7 @@ int showmap()
 int scoreUpdate()
 {
 	itoa(score, score_String, 10);
-	itoa(steps, steps_String, 10);
+	//itoa(steps, steps_String, 10);
 	textsize(24);
 	text(score_String, 68, 134, 0, 0, 0);
 	//text(steps_String, 150, 130, 0, 0, 0);
@@ -145,12 +219,32 @@ int scoreUpdate()
 // 最高分记录
 int bestscoreRecord()
 {
-	if (score > bestscore)
+	if (buttondown == 3 || buttondown == 0)
 	{
-		bestscore = score;
-		itoa(bestscore, best_String, 10);
+		itoa(bestscore[0], best_String, 10);
+		if (score > bestscore[0])
+		{
+			bestscore[0] = score;
+		}
+	}
+	if (buttondown == 1)
+	{
+		itoa(bestscore[1], best_String, 10);
+		if (score > bestscore[1])
+		{
+			bestscore[1] = score;
+		}
+	}
+	if (buttondown == 2)
+	{
+		itoa(bestscore[2], best_String, 10);
+		if (score > bestscore[2])
+		{
+			bestscore[2] = score;
+		}
 	}
 	text(best_String, 168, 134, 0, 0, 0);
+	
 	return 0;
 }
 
@@ -225,6 +319,23 @@ void startGame()
 	//playstate = true;
 }
 
+// 改变游戏地图大小
+void changeMap()
+{
+	if (buttondown == 1)
+	{
+		gamemapsize = 2;
+	}
+	else if (buttondown == 2)
+	{
+		gamemapsize = 3;
+	}
+	else if (buttondown == 3)
+	{
+		gamemapsize = 4;
+	}
+}
+
 // 重新开始游戏
 void restartGame()
 {
@@ -243,13 +354,13 @@ void restartGame()
 bool statecheck()
 {
 	int i, j;
-	for (j = 0; j < 4; j++)
+	for (j = 0; j < gamemapsize; j++)
 	{
-		for (i = 0; i < 4; i++)
+		for (i = 0; i < gamemapsize; i++)
 		{
-			if (j < 3)
+			if (j < gamemapsize - 1)
 			{
-				if (i < 3) // 检测是否还有空位
+				if (i < gamemapsize - 1) // 检测是否还有空位
 				{
 					if (gamemap[j][i] == gamemap[j + 1][i] || gamemap[j][i] == gamemap[j][i + 1] || gamemap[j][i] == 0)
 					{
@@ -264,7 +375,7 @@ bool statecheck()
 			}
 			else
 			{
-				if (i < 3)
+				if (i < gamemapsize - 1)
 				{
 					if (gamemap[j][i] == gamemap[j][i + 1] || gamemap[j][i] == 0 || gamemap[j][i + 1] == 0)
 					{
@@ -291,11 +402,11 @@ bool statecheck()
 int add(int *p)
 {
 	int i = 0, b;
-	while (i < 3)
+	while (i < gamemapsize - 1)
 	{
 		if (*(p + i) != 0)
 		{
-			for (b = i + 1; b < 4; b++)
+			for (b = i + 1; b < gamemapsize; b++)
 			{
 				if (*(p + b) != 0)
 				{
@@ -318,7 +429,7 @@ int add(int *p)
 					}
 				}
 			}
-			if (b == 4)
+			if (b == gamemapsize)
 			{
 				i++;
 			}
@@ -343,9 +454,9 @@ int moveround(int direction)
 	int i, j, g, e, b[4];
 	if (direction == 1 || direction == 2)
 	{
-		for (j = 0; j < 4; j++)
+		for (j = 0; j < gamemapsize; j++)
 		{
-			for (i = 0; i < 4; i++)
+			for (i = 0; i < gamemapsize; i++)
 			{
 				b[i] = gamemap[i][j]; // 将地图列存储到临时数组
 				gamemap[i][j] = 0;
@@ -354,7 +465,7 @@ int moveround(int direction)
 			if (direction == 1) // 按列更新地图
 			{
 				e = 0;
-				for (g = 0; g < 4; g++)
+				for (g = 0; g < gamemapsize; g++)
 				{
 					if (b[g] != 0)
 					{
@@ -365,8 +476,8 @@ int moveround(int direction)
 			}
 			else if (direction == 2)
 			{
-				e = 3;
-				for (g = 3; g >= 0; g--)
+				e = gamemapsize - 1;
+				for (g = gamemapsize - 1; g >= 0; g--)
 				{
 					if (b[g] != 0)
 					{
@@ -380,9 +491,9 @@ int moveround(int direction)
 	}
 	else if (direction == 3 || direction == 4)
 	{
-		for (j = 0; j < 4; j++)
+		for (j = 0; j < gamemapsize; j++)
 		{
-			for (i = 0; i < 4; i++)
+			for (i = 0; i < gamemapsize; i++)
 			{
 				b[i] = gamemap[j][i];
 				gamemap[j][i] = 0;
@@ -391,7 +502,7 @@ int moveround(int direction)
 			if (direction == 3)
 			{
 				e = 0;
-				for (g = 0; g < 4; g++)
+				for (g = 0; g < gamemapsize; g++)
 				{
 					if (b[g] != 0)
 					{
@@ -402,8 +513,8 @@ int moveround(int direction)
 			}
 			else if (direction == 4)
 			{
-				e = 3;
-				for (g = 3; g >= 0; g--)
+				e = gamemapsize - 1;
+				for (g = gamemapsize - 1; g >= 0; g--)
 				{
 					if (b[g] != 0)
 					{
@@ -430,9 +541,10 @@ void setup()
 	playstate = false;
 	gamestate = true;
 
+	buttondown = 0;
+	gamemapsize = 4;
 	score = 0;
 	steps = 0;
-	bestscore = 0;
 
 	// 加载图片
 	loadpic();
@@ -444,15 +556,10 @@ void setup()
 // 界面绘图
 void draw(float stateTime)
 {
+	tips();
+
 	// 初始化按钮
-	if (buttonstate == false)
-	{
-		image(NEWGAME, 256, 18);
-	}
-	else
-	{
-		image(NEWGAMEdown, 256, 18);
-	}
+	buttoninit();
 
 	if (initstate == false)
 	{
@@ -486,6 +593,31 @@ void mousePress()
 	if (inbound(mouseX, mouseY, 256, 18, 201, 52))
 	{
 		buttonstate = true;
+		buttondown = 0;
+		restartGame();
+	}
+
+	if (inbound(mouseX, mouseY, 263, 100, 55, 55))
+	{
+		buttonstate = true;
+		buttondown = 1;
+		changeMap();
+		restartGame();
+	}
+
+	if (inbound(mouseX, mouseY, 263 + 65, 100, 55, 55))
+	{
+		buttonstate = true;
+		buttondown = 2;
+		changeMap();
+		restartGame();
+	}
+
+	if (inbound(mouseX, mouseY, 263 + 65 * 2, 100, 55, 55))
+	{
+		buttonstate = true;
+		buttondown = 3;
+		changeMap();
 		restartGame();
 	}
 }
@@ -551,4 +683,10 @@ void close()
 	unloadimage(UISurface);
 	unloadimage(NEWGAME);
 	unloadimage(NEWGAMEdown);
+	unloadimage(but2x2);
+	unloadimage(but2x2down);
+	unloadimage(but3x3);
+	unloadimage(but3x3down);
+	unloadimage(but4x4);
+	unloadimage(but4x4down);
 }
