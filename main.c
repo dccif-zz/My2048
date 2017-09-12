@@ -254,9 +254,9 @@ int addpic()
 {
 	//遍历地图表添加图片
 	int PicAdd, i, j;
-	for (i = 0; i < 4; i++)
+	for (i = 0; i < gamemapsize; i++)
 	{
-		for (j = 0; j < 4; j++)
+		for (j = 0; j < gamemapsize; j++)
 		{
 			image(pic0, 25 + 110 * j, 160 + 110 * i);
 			if (gamemap[i][j] != 0)
