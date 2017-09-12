@@ -47,6 +47,8 @@ bool playstate = false; // 是否在游戏状态
 
 bool buttonstate = false; // 按钮状态
 
+bool newbuttonstate = false; // 开始新游戏状态
+
 bool gamestate = false; // 输赢状态  false 输  true 赢
 						// 开始游戏后为 true
 
@@ -111,9 +113,8 @@ int buttoninit()
 	// 点击状态
 	if (buttonstate == true)
 	{
-		if (buttondown == 0)
-		{
-			image(NEWGAMEdown, 256, 18);
+		if(newbuttonstate == true){
+			image(NEWGAMEdown,256,18);
 		}
 		else if (buttondown == 1)
 		{
@@ -219,7 +220,7 @@ int scoreUpdate()
 // 最高分记录
 int bestscoreRecord()
 {
-	if (buttondown == 3 || buttondown == 0)
+	if (buttondown == 3 || buttondown == -1)
 	{
 		itoa(bestscore[0], best_String, 10);
 		if (score > bestscore[0])
@@ -227,7 +228,7 @@ int bestscoreRecord()
 			bestscore[0] = score;
 		}
 	}
-	if (buttondown == 1)
+	else if (buttondown == 1)
 	{
 		itoa(bestscore[1], best_String, 10);
 		if (score > bestscore[1])
@@ -235,7 +236,7 @@ int bestscoreRecord()
 			bestscore[1] = score;
 		}
 	}
-	if (buttondown == 2)
+	else if (buttondown == 2)
 	{
 		itoa(bestscore[2], best_String, 10);
 		if (score > bestscore[2])
@@ -244,7 +245,7 @@ int bestscoreRecord()
 		}
 	}
 	text(best_String, 168, 134, 0, 0, 0);
-	
+
 	return 0;
 }
 
@@ -541,7 +542,8 @@ void setup()
 	playstate = false;
 	gamestate = true;
 
-	buttondown = 0;
+	buttondown = -1;
+	//buttonbefore = 0;
 	gamemapsize = 4;
 	score = 0;
 	steps = 0;
@@ -593,7 +595,9 @@ void mousePress()
 	if (inbound(mouseX, mouseY, 256, 18, 201, 52))
 	{
 		buttonstate = true;
-		buttondown = 0;
+		//buttonbefore = buttondown;
+		//buttondown = 0;
+		newbuttonstate = true;
 		restartGame();
 	}
 
@@ -627,6 +631,7 @@ void mouseMove()
 void mouseRelease()
 {
 	buttonstate = false;
+	newbuttonstate = false;
 }
 
 // 键盘事件处理函数
